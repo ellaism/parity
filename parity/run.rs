@@ -648,6 +648,7 @@ pub fn execute(cmd: RunCmd, can_restart: bool, logger: Arc<RotatingLogger>) -> R
 	).map_err(|e| format!("Sync error: {}", e))?;
 
 	service.add_notify(chain_notify.clone());
+	client.get_private_transactions_provider().add_notify(chain_notify.clone());
 
 	// start network
 	if network_enabled {

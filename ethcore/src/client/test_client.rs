@@ -44,6 +44,7 @@ use evm::{Factory as EvmFactory, VMType};
 use vm::Schedule;
 use miner::{Miner, MinerService, TransactionImportResult};
 use spec::Spec;
+use private_transactions::Provider as PrivateTransactionsProvider;
 use types::basic_account::BasicAccount;
 use types::mode::Mode;
 use types::pruning_info::PruningInfo;
@@ -414,6 +415,10 @@ impl BlockChainClient for TestBlockChainClient {
 		Ok(res)
 	}
 
+	fn get_private_transactions_provider(&self) -> Arc<PrivateTransactionsProvider> {
+		unimplemented!();
+	}
+
 	fn estimate_gas(&self, _t: &SignedTransaction, _block: BlockId) -> Result<U256, CallError> {
 		Ok(21000.into())
 	}
@@ -726,10 +731,8 @@ impl BlockChainClient for TestBlockChainClient {
 	}
 
 	fn queue_consensus_message(&self, message: Bytes) {
-		self.spec.engine.handle_consensus_message(&message).unwrap();
+		self.spec.engine.handle_message(&message).unwrap();
 	}
-
-	fn queue_private_transaction(&self, _transaction: Bytes, _peer_id: usize) { unimplemented!(); }
 
 	fn ready_transactions(&self) -> Vec<PendingTransaction> {
 		let info = self.chain_info();
